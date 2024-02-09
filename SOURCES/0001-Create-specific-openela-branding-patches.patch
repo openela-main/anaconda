@@ -1,0 +1,159 @@
+From 4411f6e1a85cf4333e73b1e400c0e5e239d0efbe Mon Sep 17 00:00:00 2001
+From: Louis Abel <label@rockylinux.org>
+Date: Tue, 15 Nov 2022 11:11:01 -0700
+Subject: [PATCH] Create specific openela branding patches
+
+---
+ data/anaconda-gtk.css                           | 3 ++-
+ data/liveinst/gnome/fedora-welcome.desktop      | 2 +-
+ data/liveinst/gnome/fedora-welcome.js           | 6 +++---
+ docs/intro.rst                                  | 4 ++--
+ docs/iscsi.rst                                  | 4 ++--
+ pyanaconda/core/constants.py                    | 5 +++--
+ pyanaconda/ui/gui/spokes/installation_source.py | 2 ++
+ pyanaconda/ui/gui/spokes/subscription.py        | 4 ++++
+ 8 files changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/data/anaconda-gtk.css b/data/anaconda-gtk.css
+index c47bb87..6d202c7 100644
+--- a/data/anaconda-gtk.css
++++ b/data/anaconda-gtk.css
+@@ -92,10 +92,11 @@ infobar.error {
+ 
+ @define-color redhat #2d2d2d;
+ @define-color fedora #2f4265;
++@define-color openela #18181b;
+ 
+ /* theme colors/images */
+ 
+-@define-color product_bg_color @fedora;
++@define-color product_bg_color @openela;
+ 
+ /* logo and sidebar classes */
+ 
+diff --git a/data/liveinst/gnome/fedora-welcome.desktop b/data/liveinst/gnome/fedora-welcome.desktop
+index 60e5c38..a637540 100644
+--- a/data/liveinst/gnome/fedora-welcome.desktop
++++ b/data/liveinst/gnome/fedora-welcome.desktop
+@@ -1,5 +1,5 @@
+ [Desktop Entry]
+-Name=Welcome to Fedora
++Name=Welcome to OpenELA
+ Exec=/usr/share/anaconda/gnome/fedora-welcome
+ Terminal=false
+ Type=Application
+diff --git a/data/liveinst/gnome/fedora-welcome.js b/data/liveinst/gnome/fedora-welcome.js
+index 0520557..4236c9b 100755
+--- a/data/liveinst/gnome/fedora-welcome.js
++++ b/data/liveinst/gnome/fedora-welcome.js
+@@ -62,7 +62,7 @@ const WelcomeWindow = new Lang.Class({
+                                                 default_width: 600,
+                                                 default_height: 550,
+                                                 skip_taskbar_hint: true,
+-                                                title: _("Welcome to Fedora"),
++                                                title: _("Welcome to OpenELA"),
+                                                 window_position: Gtk.WindowPosition.CENTER });
+       this.window.connect('key-press-event', Lang.bind(this,
+           function(w, event) {
+@@ -91,7 +91,7 @@ const WelcomeWindow = new Lang.Class({
+                                      spacing: 16 });
+       tryContent.add(new Gtk.Image({ icon_name: 'media-optical',
+                                      pixel_size: 256 }));
+-      tryContent.add(makeLabel(_("Try Fedora"), true));
++      tryContent.add(makeLabel(_("Try OpenELA"), true));
+ 
+       let tryButton = new Gtk.Button({ child: tryContent });
+       buttonBox.add(tryButton);
+@@ -107,7 +107,7 @@ const WelcomeWindow = new Lang.Class({
+       let installButton = new Gtk.Button({ child: installContent });
+       buttonBox.add(installButton);
+ 
+-      this._label = makeLabel(_("You are currently running Fedora from live media.\nYou can install Fedora now, or choose \"Install to Hard Drive\" in the Activities Overview at any later time."), false);
++      this._label = makeLabel(_("You are currently running OpenELA from live media.\nYou can install OpenELA now, or choose \"Install to Hard Drive\" in the Activities Overview at any later time."), false);
+       mainGrid.add(this._label);
+ 
+       installButton.connect('clicked', Lang.bind(this,
+diff --git a/docs/intro.rst b/docs/intro.rst
+index bbaf74f..ec2ed94 100644
+--- a/docs/intro.rst
++++ b/docs/intro.rst
+@@ -1,8 +1,8 @@
+ Introduction to Anaconda
+ ========================
+ 
+-Anaconda is the installation program used by Fedora, Red Hat Enterprise Linux
+-and some other distributions.
++Anaconda is the installation program used by Fedora, Red Hat Enterprise Linux,
++OpenELA, and some other distributions.
+ 
+ During installation, a target computer's hardware is identified and configured
+ and the appropriate file systems for the system's architecture are created.
+diff --git a/docs/iscsi.rst b/docs/iscsi.rst
+index 847078d..13b4df3 100644
+--- a/docs/iscsi.rst
++++ b/docs/iscsi.rst
+@@ -139,8 +139,8 @@ If for some reason the DeviceTree fails at recognizing iscsi devices as such,
+ The booting problems are either due to incorrectly generated dracut boot
+ arguments or they are simply dracut bugs.
+ 
+-Note that many of the iscsi adapters are installed in different Red Hat machines
+-and so the issues can often be reproduced and debugged.
++Note that many of the iscsi adapters are installed in different Enterprise Linux
++machines and so the issues can often be reproduced and debugged.
+ 
+ 
+ Future of iSCSI in Anaconda
+diff --git a/pyanaconda/core/constants.py b/pyanaconda/core/constants.py
+index 2f62cce..5cb9852 100644
+--- a/pyanaconda/core/constants.py
++++ b/pyanaconda/core/constants.py
+@@ -58,7 +58,8 @@ DEFAULT_REPOS = [productName.split('-')[0].lower(),
+                  "fedora-modular-server",
+                  "rawhide",
+                  "BaseOS",  # Used by RHEL
+-                 "baseos"]  # Used by CentOS Stream
++                 "baseos",  # Used by CentOS Stream
++                 "minimal"] # Used by derivatives for minimal images only
+ 
+ DBUS_ANACONDA_SESSION_ADDRESS = "DBUS_ANACONDA_SESSION_BUS_ADDRESS"
+ 
+@@ -156,7 +157,7 @@ WARNING_SUPPORT_REMOVED = N_(
+ )
+ 
+ WARNING_HARDWARE_UNSUPPORTED = N_(
+-    "This hardware (or a combination thereof) is not supported by Red Hat. For more information "
++    "This hardware (or a combination thereof) is not supported by Red Hat nor OpenELA. For more information "
+     "on supported hardware, please refer to http://www.redhat.com/hardware."
+ )
+ 
+diff --git a/pyanaconda/ui/gui/spokes/installation_source.py b/pyanaconda/ui/gui/spokes/installation_source.py
+index 8a0f463..adc85b5 100644
+--- a/pyanaconda/ui/gui/spokes/installation_source.py
++++ b/pyanaconda/ui/gui/spokes/installation_source.py
+@@ -784,6 +784,8 @@ class SourceSpoke(NormalSpoke, GUISpokeInputCheckHandler, SourceSwitchHandler):
+         self._network_button = self.builder.get_object("networkRadioButton")
+         self._network_box = self.builder.get_object("networkBox")
+ 
++        really_hide(self._cdn_button)
++
+         self._url_entry = self.builder.get_object("urlEntry")
+         self._protocol_combo_box = self.builder.get_object("protocolComboBox")
+         self._iso_chooser_button = self.builder.get_object("isoChooserButton")
+diff --git a/pyanaconda/ui/gui/spokes/subscription.py b/pyanaconda/ui/gui/spokes/subscription.py
+index 9e74fc6..ef214b6 100644
+--- a/pyanaconda/ui/gui/spokes/subscription.py
++++ b/pyanaconda/ui/gui/spokes/subscription.py
+@@ -533,6 +533,10 @@ class SubscriptionSpoke(NormalSpoke):
+         # also set the spoke warning banner
+         self.show_warning_message(error_message)
+ 
++    @property
++    def showable(self):
++        return False
++
+     def initialize(self):
+         NormalSpoke.initialize(self)
+         self.initialize_start()
+-- 
+2.38.1
+
