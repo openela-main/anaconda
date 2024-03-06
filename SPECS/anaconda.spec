@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              33.16.8.9
+Version:              33.16.9.4
 Release:              1%{?dist}.openela.0.1
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -36,7 +36,7 @@ Patch2:               0004-openela-anaconda-po.patch
 %define libxklavierver 5.4
 %define mehver 0.23-1
 %define nmver 1.0
-%define pykickstartver 3.16.15-1
+%define pykickstartver 3.16.16-1
 %define pypartedver 2.5-2
 %define rpmver 4.10.0
 %define simplelinever 1.1.3-1
@@ -370,16 +370,51 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Fri Feb 09 2024 Release Engineering <releng@openela.org> - 33.16.8.9.openela.0.1
+* Wed Mar 06 2024 Release Engineering <releng@openela.org> - 33.16.9.4.openela.0.1
 - Add OpenELA specific changes
+
+* Wed Aug 09 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.9.4-1
+- iscsi: Allow changing iSCSI initiator name once set (vtrefny)
+  Resolves: rhbz#2223980
+
+* Tue Jul 11 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.9.3-1
+- Be more indulgent when reclaiming disk space (jstodola)
+  Resolves: rhbz#1855371
+- Do not print error on inst.ks=cdrom|hd (jkonecny)
+  Resolves: rhbz#2211857
+
+* Mon Jun 12 2023 Vladimír Slávik <vslavik@redhat.com> - 33.16.9.2-1
+- Stop infinite wait for CDROM when KS is processed (jkonecny)
+  Resolves: rhbz#2209602
+- Apply --noverifyssl option for liveimg kickstart command (jstodola)
+  Resolves: rhbz#1886985
+- Change driver_updates exit info messages to debug (jkonecny)
+  Related: rhbz#2154904
+
+* Thu May 11 2023 Radek Vykydal <rvykydal@redhat.com> - 33.16.9.1-1
+- driver_updates: migrate driver_updates.py to pep8 format (jkonecny)
+  Related: rhbz#2154904
+- driver_updates: adding tests for the new logging solution (jkonecny)
+  Related: rhbz#2154904
+- driver_updates: add lot of debug logs for easier debugging (jkonecny)
+  Related: rhbz#2154904
+- driver_updates: extend where we print log messages (jkonecny)
+  Resolves: rhbz#2154904
+- Add DNS search and ignore options from kickstart (vslavik)
+  Resolves: rhbz#1656662
+- Add DNS search and ignore options from kickstart (vslavik)
+  Resolves: rhbz#1656662
+- Add missing documentation about OEMDRV (jkonecny)
+  Related: rhbz#1770969
+- oemdrv: wait up to 5 seconds for disks to be handled (rmetrich)
+  Resolves: rhbz#1770969
 
 * Fri Mar 17 2023 Martin Kolman <mkolman@redhat.com> - 33.16.8.9-1
 - Update translations
   Resolves: rhbz#2139689
 
 * Thu Feb 09 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.8.8-1
-- Underscore present in Spanish translation of 'TIME & DATE'
-  Resolves: rhbz#2148998
+- Update outdated translations
 
 * Thu Feb 02 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.8.7-1
 - Report registration errors from kickstart (mkolman)
