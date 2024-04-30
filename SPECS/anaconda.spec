@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              34.25.3.8
+Version:              34.25.4.9
 Release:              1%{?dist}.openela.0.3
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -38,13 +38,14 @@ Patch2:               0004-openela-anaconda-po.patch
 %define libxklavierver 5.4
 %define mehver 0.23-1
 %define nmver 1.0
-%define pykickstartver 3.32.10-1
+%define pykickstartver 3.32.11-1
 %define pypartedver 2.5-2
-%define pythonblivetver 1:3.6.0-4
+%define pythonblivetver 1:3.6.0-13
 %define rpmver 4.10.0
 %define simplelinever 1.8.3-1
 %define subscriptionmanagerver 1.29.31
 %define utillinuxver 2.15.1
+%define rpmostreever 2023.2
 
 BuildRequires:        audit-libs-devel
 BuildRequires:        libtool
@@ -103,6 +104,11 @@ Requires:             python3-systemd
 Requires:             python3-productmd
 Requires:             python3-dasbus >= %{dasbusver}
 Requires:             flatpak-libs
+# dependencies for rpm-ostree payload module
+Requires:             rpm-ostree >= %{rpmostreever}
+Requires:             ostree
+# used by ostree command for native containers
+Requires:             skopeo
 %if %{defined rhel} && %{undefined centos}
 Requires:             subscription-manager >= %{subscriptionmanagerver}
 %endif
@@ -228,8 +234,6 @@ Requires:             rsync
 # only WeakRequires elsewhere and not guaranteed to be present
 Requires:             device-mapper-multipath
 Requires:             zram-generator
-# Submitting bugs to bugzilla
-# Requires:           libreport-rhel-anaconda-bugzilla
 # External tooling for managing NVMe-FC devices in the installation environment
 Requires:             nvme-cli
 
@@ -414,8 +418,98 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Fri Feb 09 2024 Release Engineering <releng@openela.org> - 34.25.3.8.openela.0.3
+* Tue Apr 30 2024 Release Engineering <releng@openela.org> - 34.25.4.9.openela.0.3
 - Add OpenELA specific changes
+
+* Thu Mar 14 2024 Radek Vykydal <rvykydal@redhat.com> - 34.25.4.9-1
+- Do not initialize kernel features in init (jkonecny)
+  Resolves: RHEL-27076
+
+* Mon Mar 04 2024 Radek Vykydal <rvykydal@redhat.com> - 34.25.4.8-1
+- Update translations
+  Resolves: RHEL-24945
+
+* Fri Feb 16 2024 Jiri Konecny <jkonecny@redhat.com> - 34.25.4.7-1
+- Lower log file permission in /tmp (jkonecny)
+  Resolves: RHEL-23345
+- Add utility function to set file mode (jkonecny)
+  Related: RHEL-23345
+
+* Wed Feb 07 2024 Martin Kolman <mkolman@redhat.com> - 34.25.4.6-1
+- Disable bug reporting to Bugzilla from anaconda (kkoukiou)
+  Resolves: RHEL-24419
+- Fixed file-write operation to a public directory (ataf)
+  Resolves: RHEL-23345
+
+* Thu Feb 01 2024 Martin Kolman <mkolman@redhat.com> - 34.25.4.5-1
+- bootupd: Use --write-uuid (walters)
+  Related: RHEL-17205
+- bootloader: Detect bootupd and skip regular install (vslavik)
+  Related: RHEL-17205
+- ostree: Use bootupd if installed by payload (vslavik)
+  Resolves: RHEL-17205
+- bootloader: Create an installation task for collecting kernel arguments
+  (vponcova)
+  Related: RHEL-17205
+- bootloader: Add the collect_arguments method (vponcova)
+  Related: RHEL-17205
+- bootloader: Remove the install_boot_loader function (vponcova)
+  Related: RHEL-17205
+- Apply the bootloader options before the installation (vponcova)
+  Related: RHEL-17205
+
+* Mon Jan 29 2024 Martin Kolman <mkolman@redhat.com> - 34.25.4.4-1
+- rpm-ostree: Setup readonly sysroot for ostree & rw karg (tim)
+  Related: RHEL-2250
+
+* Wed Jan 24 2024 Martin Kolman <mkolman@redhat.com> - 34.25.4.3-1
+- Fix missing emit of zfcp kickstart statements (maier)
+  Related: RHEL-11384
+- DeviceTreeViewer: Add path-id attribute to zfcp-attached SCSI disks (maier)
+  Related: RHEL-11384
+- Fix missing WWID values for multipath devices in advanced storage UI
+  (#2046654) (maier)
+  Resolves: RHEL-11384
+- rescue: Don't allow to mount systems without a root device (vponcova)
+  Resolves: RHEL-14696
+- Do not crash on default None values of ostreecontainer command (rvykydal)
+  Related: RHEL-2250
+- Fix wrong dracut timeout message (jkonecny)
+  Resolves: RHEL-5638
+- Move rpm-ostree deps from Lorax to Anaconda (#2125655) (jkonecny)
+  Related: RHEL-2250
+- Implement needs_network for rpm_ostree_container (#2125655) (jkonecny)
+  Related: RHEL-2250
+- Add tests for RPM Ostree payload with source from container (#2125655)
+  (rvykydal)
+  Related: RHEL-2250
+- Enable RPM OSTree from container source in payload (#2125655) (rvykydal)
+  Resolves: RHEL-2250
+- Add RPM OSTree source from container (#2125655) (rvykydal)
+  Related: RHEL-2250
+
+* Tue Jan 09 2024 Martin Kolman <mkolman@redhat.com> - 34.25.4.2-1
+- tests: Add a test case for the NVMe module (vtrefny)
+  Resolves: RHEL-11543
+  Resolves: RHEL-11544
+- Add a simple NVMe module for NVMe Fabrics support (vtrefny)
+  Resolves: RHEL-11543
+  Resolves: RHEL-11544
+- network: ignore BOOTIF connections when creating device configurations
+  (rvykydal)
+  Resolves: RHEL-4766
+- network: ignore BOOTIF connections when looking for initramfs bond ports
+  (rvykydal)
+  Resolves: RHEL-4766
+
+* Thu Dec 07 2023 Jiri Konecny <jkonecny@redhat.com> - 34.25.4.1-1
+- Fix versioning on RHEL 9.4 (jkonecny)
+
+* Wed Dec 06 2023 Jiri Konecny <jkonecny@redhat.com> - 34.25.3.9-1
+- timezone: for kickstart allow also timezones not offered by GUI (rvykydal)
+  Resolves: jira#RHEL-13150
+- Rename Organization to Organization ID on subscription screen (mkolman)
+  Resolves: jira#RHEL-11167
 
 * Wed Aug 09 2023 Jiri Konecny <jkonecny@redhat.com> - 34.25.3.8-1
 - iscsi: Allow changing iSCSI initiator name once set (vtrefny)
