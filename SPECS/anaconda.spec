@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              33.16.9.4
+Version:              33.16.10.5
 Release:              1%{?dist}.openela.0.1
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -370,8 +370,39 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Wed Mar 06 2024 Release Engineering <releng@openela.org> - 33.16.9.4.openela.0.1
+* Wed May 22 2024 Release Engineering <releng@openela.org> - 33.16.10.5.openela.0.1
 - Add OpenELA specific changes
+
+* Tue Mar 05 2024 Radek Vykydal <rvykydal@redhat.com> - 33.16.10.5-1
+- Update translations
+  Resolves: RHEL-24836
+
+* Fri Feb 16 2024 Jiri Konecny <jkonecny@redhat.com> - 33.16.10.4-1
+- Lower log file permission in /tmp (jkonecny)
+  Resolves: RHEL-23344
+- Add utility function to set file mode (jkonecny)
+  Related: RHEL-23344
+
+* Wed Feb 07 2024 Martin Kolman <mkolman@redhat.com> - 33.16.10.3-1
+- Fixed file-write operation to a public directory (ataf)
+  Resolves: RHEL-23344
+
+* Tue Jan 23 2024 Martin Kolman <mkolman@redhat.com> - 33.16.10.2-1
+- Propagate a lazy proxy of the storage model (vponcova)
+  Resolves: RHEL-16276
+- rescue: Don't allow to mount systems without a root device (vponcova)
+  Resolves: RHEL-4784
+
+* Wed Dec 13 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.10.1-1
+- timezone: for kickstart allow also timezones not offered by GUI (rvykydal)
+  Resolves: RHEL-13151
+  Resolves: RHEL-4795
+- Rename Organization to Organization ID on subscription screen (mkolman)
+  Resolves: RHEL-11168
+
+* Mon Sep 18 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.9.5-1
+- [ja_JP] - Need to update string on anaconda screen for installation completed
+  Resolves: rhbz#2216746
 
 * Wed Aug 09 2023 Jiri Konecny <jkonecny@redhat.com> - 33.16.9.4-1
 - iscsi: Allow changing iSCSI initiator name once set (vtrefny)
