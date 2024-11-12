@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              34.25.4.9
+Version:              34.25.5.9
 Release:              1%{?dist}.openela.0.3
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -10,7 +10,7 @@ URL:                  http://fedoraproject.org/wiki/Anaconda
 # git checkout -b archive-branch anaconda-%%{version}-%%{release}
 # ./autogen.sh
 # make dist
-Source0:              %{name}-%{version}.tar.bz2
+Source0:              https://github.com/rhinstaller/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
 
 Patch1:               0001-Create-specific-openela-branding-patches.patch
 Patch2:               0004-openela-anaconda-po.patch
@@ -301,6 +301,7 @@ Requires:             dracut-network
 Requires:             dracut-live
 Requires:             xz
 Requires:             python3-kickstart
+Requires:             iputils
 
 %description dracut
 The 'anaconda' dracut module handles installer-specific boot tasks and
@@ -418,8 +419,83 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Tue Apr 30 2024 Release Engineering <releng@openela.org> - 34.25.4.9.openela.0.3
+* Tue Nov 12 2024 Release Engineering <releng@openela.org> - 34.25.5.9.openela.0.3
 - Add OpenELA specific changes
+
+* Wed Aug 21 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.9-1
+- network: ignore kickstart configuration of nBFT devices (rvykydal)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- network: do not dump configurations of nBFT devices (rvykydal)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- network: ignore nBFT devices connections in network configuration (rvykydal)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- network: add a test for ignoring ifname=nbft* for device renaming (rvykydal)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- network: do not create empty dir for only ifname=nbft* options (rvykydal)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- network: Avoid creating link files for 'nbft' interfaces (tbzatek)
+  Resolves: RHEL-30149
+  Resolves: RHEL-34235
+  Resolves: RHEL-32146
+- Update translations from Weblate for rhel-9 (github-actions)
+
+* Wed Aug 14 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.8-1
+- Use proxy server also for FTP .treeinfo download (jkonecny)
+  Resolves: RHEL-27938
+- Update translations from Weblate for rhel-9 (github-actions)
+
+* Wed Aug 07 2024 Radek Vykydal <rvykydal@redhat.com> - 34.25.5.7-1
+- Fix source spoke being inaccessible if payload thread errors out (mkolman)
+  Resolves: RHEL-4721
+- Do not create default wired connections for bond ports (rvykydal)
+  Resolves: RHEL-38451
+- Consolidate code for dumping network connections (rvykydal)
+  Related: RHEL-38451
+
+* Mon Jul 01 2024 Katerina Koukiou <kkoukiou@redhat.com> - 34.25.5.6-1
+- Update translations from Weblate for rhel-9
+- Change location of rescue mode flag file (jstodola)
+  Resolves: RHEL-4794
+
+* Mon May 20 2024 Katerina Koukiou <kkoukiou@redhat.com> - 34.25.5.5-1
+- Update translations from Weblate for rhel-9
+- Do not rewrite logs in rescue mode (jstodola)
+  Resolves: RHEL-4794
+- Write a warning rescue selinux (akankovs)
+  Resolves: RHEL-14005
+- Fix kickstart --dhcpclass option application (rvykydal)
+  Resolves: RHEL-30406
+
+* Mon Apr 15 2024 Katerina Koukiou <kkoukiou@redhat.com> - 34.25.5.3-1
+- Fix Source0 in spec to point to upstream source URL (kkoukiou)
+- Do not try to load sha256 module in intramfs (rvykydal)
+  Resolves: RHEL-4747
+- Do not try to load the floppy kernel module (jstodola)
+  Resolves: RHEL-4747
+- anaconda-modprobe: don't try and load cramfs (awilliam)
+  Resolves: RHEL-4747
+
+* Fri Apr 12 2024 Katerina Koukiou <kkoukiou@redhat.com> - 34.25.5.2-1
+- network: do not crash on destroyed device object in GUI (rvykydal)
+  Resolves: RHEL-20891
+
+* Tue Apr 09 2024 Katerina Koukiou <kkoukiou@redhat.com> - 34.25.5.1-1
+- anaconda-diskroot: wait before dying on media check fail (awilliam)
+  Resolves: RHEL-4790
+- Add ping tool to Dracut (jkonecny)
+  Resolves: RHEL-5719
+- gui:Fix index error for _remove_treeinfo_repositories() (liuwenyu.0311)
+  Resolves: RHEL-29561
 
 * Thu Mar 14 2024 Radek Vykydal <rvykydal@redhat.com> - 34.25.4.9-1
 - Do not initialize kernel features in init (jkonecny)
