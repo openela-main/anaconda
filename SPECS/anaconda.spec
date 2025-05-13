@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              34.25.5.9
+Version:              34.25.5.17
 Release:              1%{?dist}.openela.0.3
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -38,7 +38,7 @@ Patch2:               0004-openela-anaconda-po.patch
 %define libxklavierver 5.4
 %define mehver 0.23-1
 %define nmver 1.0
-%define pykickstartver 3.32.11-1
+%define pykickstartver 3.32.13-1
 %define pypartedver 2.5-2
 %define pythonblivetver 1:3.6.0-13
 %define rpmver 4.10.0
@@ -132,7 +132,7 @@ Requires:             python3-pid
 
 # Required by the systemd service anaconda-fips.
 Requires:             crypto-policies
-Requires:             /usr/bin/update-crypto-policies
+Requires:             crypto-policies-scripts
 
 # required because of the rescue mode and VNC question
 Requires:             anaconda-tui = %{version}-%{release}
@@ -236,6 +236,9 @@ Requires:             device-mapper-multipath
 Requires:             zram-generator
 # External tooling for managing NVMe-FC devices in the installation environment
 Requires:             nvme-cli
+# needed for encrypted DNS
+Requires:             dnsconfd
+Requires:             dnsconfd-dracut
 
 %description install-img-deps
 The anaconda-install-img-deps metapackage lists all boot.iso installation image dependencies.
@@ -302,6 +305,9 @@ Requires:             dracut-live
 Requires:             xz
 Requires:             python3-kickstart
 Requires:             iputils
+# Required for encrypted DNS
+Requires:             dnsconfd-dracut
+Requires:             dnsconfd
 
 %description dracut
 The 'anaconda' dracut module handles installer-specific boot tasks and
@@ -419,8 +425,117 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Tue Nov 12 2024 Release Engineering <releng@openela.org> - 34.25.5.9.openela.0.3
+* Tue May 13 2025 Release Engineering <releng@openela.org> - 34.25.5.17.openela.0.3
 - Add OpenELA specific changes
+
+* Thu Mar 06 2025 Radek Vykydal <rvykydal@redhat.com> - 34.25.5.17-1
+- network: start dnsconfd in initramfs (rvykydal)
+  Resolves: RHEL-80303
+- network: enable dnsconfd service on installed system if required (rvykydal)
+  Resolves: RHEL-80023
+- network: pass 16-dns-backend.conf to target system (rvykydal)
+  Resolves: RHEL-80233
+- netowrk: enable dnsconfd service in installer environment (rvykydal)
+  Resolves: RHEL-80023
+
+* Mon Feb 17 2025 Radek Vykydal <rvykydal@redhat.com> - 34.25.5.16-1
+- network: add dnsconfd to selected packages if used in installer (rvykydal)
+  Resolves: RHEL-79803
+- network: add dnsconfd to installer environment (rvykydal)
+  Resolves: RHEL-79804
+
+* Fri Feb 07 2025 Radek Vykydal <rvykydal@redhat.com> - 34.25.5.15-1
+- security: add a development note for certificates import in initramfs
+  (rvykydal)
+  Related: RHEL-77155
+- security: do not issue warning on existing certificate file during dump
+  (rvykydal)
+  Resolves: RHEL-77155
+- network: pass NM global dns configuration to the installed system (rvykydal)
+  Resolves: RHEL-71824
+- network: pass global dns initrd option to the installed system (rvykydal)
+  Resolves: RHEL-71824
+
+* Mon Feb 03 2025 Jiri Konecny <jkonecny@redhat.com> - 34.25.5.14-1
+- rpmostree: Use `--merge` for kargs (walters)
+  Resolves: RHEL-76923
+
+* Wed Jan 29 2025 Jiri Konecny <jkonecny@redhat.com> - 34.25.5.13-1
+- security: require pykickstart version with %%certificates support (rvykydal)
+  Resolves: RHEL-61430
+- security: do not crash initramfs ks parsing on failing certificate dump
+  (rvykydal)
+  Resolves: RHEL-61430
+- security: add service to transfer certificates from initramfs (rvykydal)
+  Resolves: RHEL-61430
+- security: import certificates in initramfs (rvykydal)
+  Resolves: RHEL-61430
+- security: install certificates in pre-install phase only for dnf payload
+  (rvykydal)
+  Resolves: RHEL-61430
+- security: raise exception if certificate destination is unknown (rvykydal)
+  Resolves: RHEL-61430
+- security: log a warning when dumping certificate over an existing file
+  (rvykydal)
+  Resolves: RHEL-61430
+- security: pre-install certificates before payload installation (rvykydal)
+  Resolves: RHEL-61430
+- security: add API to install certificates early before payload (rvykydal)
+  Resolves: RHEL-61430
+- security: install certificates on target system (rvykydal)
+  Resolves: RHEL-61430
+- security: Add API for installation on target system (rvykydal)
+  Resolves: RHEL-61430
+- security: import certificates early after Anaconda start (rvykydal)
+  Resolves: RHEL-61430
+- security: add API to import certificates to Anaconda environment (rvykydal)
+  Resolves: RHEL-61430
+- security: add API: Certificate getter (rvykydal)
+  Resolves: RHEL-61430
+- kickstart: extend section specification for list of section data (rvykydal)
+- security: implement the support to install certificates to Anaconda
+  (rvykydal)
+  Resolves: RHEL-61430
+- translations: bump dependency to l10n repo because of branch switch
+  (k.koukiou)
+- util: correct errors and suppress stderr for common cases (riehecky)
+- util: Add additional information for EFI systems (riehecky)
+  Resolves: RHEL-55128
+
+* Wed Nov 13 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.12-1
+- Explicitly place biosboot partition only on stage1 disk (vtrefny)
+  Resolves: RHEL-50454
+
+* Mon Nov 04 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.11-1
+- security: call /usr/libexec/fips-setup-helper (asosedkin)
+  Resolves: RHEL-58667
+- release-notes: Document support for compressed kernel modules in Driver Discs
+  (peter.georg)
+  Related: RHEL-9913
+- Add documentation about support for compressed kernel modules (peter.georg)
+  Resolves: RHEL-9913
+- dd_extract: Update test info to reflect added support for compressed kernel
+  modules (peter.georg)
+  Resolves: RHEL-9913
+- dd_extract: Add test for zstd compressed kernel module (peter.georg)
+  Resolves: RHEL-9913
+- dd_extract: Add test for xz compressed kernel module (peter.georg)
+  Resolves: RHEL-9913
+- dd_extract: Add support for compressed kernel modules (peter.georg)
+  Resolves: RHEL-9913
+- New version - 34.25.5.10 (k.koukiou)
+
+* Fri Nov 01 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.10-1
+- Fix check for biosboot partition in GRUB2.check (vtrefny)
+  Resolves: RHEL-55922
+- Ignore all storage errors when trying to activate swaps (vtrefny)
+  Resolves: RHEL-55922
+
+* Tue Oct 01 2024 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.5.10-1
+- Fix check for biosboot partition in GRUB2.check (vtrefny)
+  Resolves: RHEL-55922
+- Ignore all storage errors when trying to activate swaps (vtrefny)
+  Resolves: RHEL-55922
 
 * Wed Aug 21 2024 Martin Kolman <mkolman@redhat.com> - 34.25.5.9-1
 - network: ignore kickstart configuration of nBFT devices (rvykydal)
