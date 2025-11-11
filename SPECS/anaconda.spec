@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              34.25.5.17
+Version:              34.25.7.6
 Release:              1%{?dist}.openela.0.3
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -425,8 +425,84 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Tue May 13 2025 Release Engineering <releng@openela.org> - 34.25.5.17.openela.0.3
+* Tue Nov 11 2025 Release Engineering <releng@openela.org> - 34.25.7.6.openela.0.3
 - Add OpenELA specific changes
+
+* Wed Aug 20 2025 Martin Kolman <mkolman@redhat.com> - 34.25.7.6-1
+- Fix vconsole layout doesn't work for ostree (jkonecny)
+  Resolves: RHEL-101057
+- test: make dnf substitutions test check only relevant values (rvykydal)
+- test: add new substitution members in dnf tests (rvykydal)
+
+* Mon Jun 30 2025 Jiri Konecny <jkonecny@redhat.com> - 34.25.7.5-1
+- bootloader: drop write_config_console, just preserve console= (awilliam)
+  Resolves: RHEL-98670
+- payload/rpm-ostree: Include program output in exception (walters)
+  Resolves: RHEL-45184
+
+* Thu May 22 2025 Jiri Konecny <jkonecny@redhat.com> - 34.25.7.4-1
+- Revert "s390x - enable raid1 as a stage2 device" (jkonecny)
+  Reverts: RHEL-21691
+- test_module_part_blivet: fix pylint disable (jkonecny)
+  Related: RHEL-85416
+- pyanaconda: module.common.task fix cyclic import (jkonecny)
+  Related: RHEL-85416
+- pyanaconda: module_manager: fix ciclic import (k.koukiou)
+  Related: RHEL-85416
+- pyanaconda: bootloader: fix ImportError (k.koukiou)
+  Related: RHEL-85416
+- ruff: enable isort rules and autofix all isort warnings Autofixed with: ruff
+  check --exclude pyanaconda/core/kickstart/commands.py --fix --select I .
+  (jkonecny)
+  Resolves: RHEL-85416
+- Add ruff, a very fast linter (vslavik)
+  Related: RHEL-85416
+- Relabel /var/log/ and /root/original-ks.cfg (champetier.etienne)
+  Resolves: RHEL-85298
+
+* Tue May 13 2025 Jiri Konecny <jkonecny@redhat.com> - 34.25.7.3-1
+- Sort RPM versions via rpm.labelCompare() and not via
+  packaging.version.LegacyVersion() (miro)
+  Resolves: RHEL-87358
+- rpm_ostree/installation.py: fix image deployment on s390x (rvykydal)
+  Resolves: RHEL-63237
+- Add additional config_get Dracut function tests (jkonecny)
+  Related: RHEL-48837
+- Update the tests/README.rst file (jkonecny)
+  Related: RHEL-48837
+- Move shell testing to a separated directory (jkonecny)
+  Related: RHEL-48837
+- Enable dynamic bash commands disable for tests (jkonecny)
+  Related: RHEL-48837
+- Add test for config_get dracut function (jkonecny)
+  Related: RHEL-48837
+- Fix trailing `/` when downloading stage2 image (jkonecny)
+  Resolves: RHEL-48837
+- Fix whitespace chars broke Dracut config parsing (jkonecny)
+  Related: RHEL-48837
+
+* Fri Apr 25 2025 Martin Kolman <mkolman@redhat.com> - 34.25.7.2-1
+- Fix typo in systemd service (jstodola)
+  Resolves: RHEL-78272
+- s390x - enable raid1 as a stage2 device (dan)
+  Resolves: INSTALLER-4148
+  Resolves: RHEL-21691
+- edns: restart dnsconfd only after the first kickstart parsing (rvykydal)
+  Resolves: RHEL-82694
+- edns: allow dnsconfd name resolution for kickstart fetching (rvykydal)
+  Resolves: RHEL-82694
+
+* Wed Apr 16 2025 Martin Kolman <mkolman@redhat.com> - 34.25.7.1-1
+- network: disable NM autoconnections also when BOOTIF is used (rvykydal)
+  Resolves: RHEL-78272
+- network: support inst.net.noautodefault option (rvykydal)
+  Related: RHEL-78272
+- security: fix dnsconfd backend option check in initramfs (rvykydal)
+  Resolves: RHEL-83214
+- Support leavebootorder for bootupd (jkonecny)
+  Resolves: RHEL-40897
+- bootupd: call bootupctl with --update-firmware (awilliam)
+  Resolves: RHEL-40897
 
 * Thu Mar 06 2025 Radek Vykydal <rvykydal@redhat.com> - 34.25.5.17-1
 - network: start dnsconfd in initramfs (rvykydal)
