@@ -1,6 +1,6 @@
 Summary: Graphical system installer
 Name:    anaconda
-Version: 40.22.3.26
+Version: 40.22.3.33
 Release: 1%{?dist}
 License: GPL-2.0-or-later
 URL:     http://fedoraproject.org/wiki/Anaconda
@@ -104,6 +104,7 @@ Requires: python3-pwquality
 Requires: python3-systemd
 Requires: python3-productmd
 Requires: python3-dasbus >= %{dasbusver}
+Requires: flatpak
 Requires: flatpak-libs
 %if %{defined rhel} && %{undefined centos}
 Requires: subscription-manager >= %{subscriptionmanagerver}
@@ -487,6 +488,135 @@ rm -rf \
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
+* Fri Sep 12 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.33-1
+- Fix setting of kernel console logging level for anaconda (rvykydal)
+  Resolves: RHEL-110525
+
+* Wed Aug 20 2025 Martin Kolman <mkolman@redhat.com> - 40.22.3.32-1
+- Fix vconsole layout doesn't work for ostree (jkonecny)
+  Resolves: RHEL-101058
+- Remove unused Flatpak manager code (jkonecny)
+  Resolves: RHEL-106503
+- Rename DNF strings to Flatpak in installation.py (jkonecny)
+  Resolves: RHEL-106503
+- Update to the approved version of the blivet change (a.badger)
+  Resolves: RHEL-69878
+- Do not duplicate the DEVICE_TYPES enum in storage_constraints (a.badger)
+  Resolves: RHEL-69878
+- Retrieve DEVICE_TYPES from blivet. (a.badger)
+  Resolves: RHEL-69878
+
+* Mon Jun 30 2025 Jiri Konecny <jkonecny@redhat.com> - 40.22.3.31-1
+- bootloader: drop write_config_console, just preserve console= (awilliam)
+  Resolves: RHEL-79961
+- flatpak: Fix Flatpak source generation from DNF (jkonecny)
+  Related: RHEL-75804
+- flatpak: Add constants for Flatpak (jkonecny)
+  Related: RHEL-75804
+- flatpak: Change log level for source processing (jkonecny)
+  Related: RHEL-75804
+- flatpak: Improve log for setting refs for install (jkonecny)
+  Related: RHEL-75804
+- flatpak: Improve documentation (jkonecny)
+  Related: RHEL-75804
+- flatpak: `NoSourceError` to `SourceSetupError` (jkonecny)
+  Related: RHEL-75804
+- Fix imports in flatpak payload (jkonecny)
+  Related: RHEL-75804
+- When installing Flatpaks from a local repository, disable download (otaylor)
+  Related: RHEL-75804
+- Add additional logging to Flatpak code (jkonecny)
+  Related: RHEL-75804
+- Fix directory where flatpak blobs are stored (jkonecny)
+  Related: RHEL-75804
+- Add FlatpakManager tests (jkonecny)
+  Related: RHEL-75804
+- Improve FlatpakManager testing (jkonecny)
+  Related: RHEL-75804
+- Add tests for Flatpak source.py (jkonecny)
+  Related: RHEL-75804
+- Add tests for Flatpak payload utils (jkonecny)
+  Related: RHEL-75804
+- Extract flatpak.source utils to a separate module (jkonecny)
+  Related: RHEL-75804
+- Add Flatpak tests for the Flatpak module (jkonecny)
+  Related: RHEL-75804
+- Do not allow any sources for Flatpak payload (jkonecny)
+  Related: RHEL-75804
+- Support payload with no default source (jkonecny)
+  Related: RHEL-75804
+- Add new API for Flatpak to CalculateSizeWithTask (jkonecny)
+  Related: RHEL-75804
+- Add side_payload to PayloadBase object (jkonecny)
+  Related: RHEL-75804
+- Add more logs for easier Flatpak module debugging (jkonecny)
+  Related: RHEL-75804
+- Call calculate_size of the Flatpak manager (jkonecny)
+  Related: RHEL-75804
+- Improve logging of the Flatpak module (jkonecny)
+  Related: RHEL-75804
+- Support Flatpak preinstallation as part of a DNF install (otaylor)
+  Resolves: RHEL-75804
+- anaconda.spec: Add Flatpak client to Requires (otaylor)
+  Resolves: RHEL-75804
+- Extract pick_download_location(), calculate_required_space() utilities
+  (otaylor)
+  Resolves: RHEL-75804
+- Move hardcoded flatpak remote to configuration (jkonecny)
+  Related: RHEL-75804
+- payload/rpm-ostree: Include program output in exception (walters)
+  Resolves: RHEL-83926
+
+* Thu May 22 2025 Jiri Konecny <jkonecny@redhat.com> - 40.22.3.30-1
+- Revert "s390x - enable raid1 as a stage2 device" (jkonecny)
+  Reverts: RHEL-83924
+- pyanaconda: module_manager: fix ciclic import (k.koukiou)
+  Related: RHEL-85415
+- pyanaconda: bootloader: fix ImportError (k.koukiou)
+  Related: RHEL-85415
+- ruff: enable isort rules and autofix all isort warnings (jkonecny)
+  Resolves: RHEL-85415
+
+* Tue May 13 2025 Jiri Konecny <jkonecny@redhat.com> - 40.22.3.29-1
+- liveinst: Propagate the AT-SPI bus address to Anaconda for Wayland (neal)
+  Resolves: RHEL-88645
+- Revert "Do not copy resolv.conf to target system at the end of installation"
+  (mkolman)
+  Resolves: RHEL-84110
+- rpm_ostree/installation.py: fix image deployment on s390x (nikita)
+  Resolves: RHEL-88558
+
+* Fri Apr 25 2025 Martin Kolman <mkolman@redhat.com> - 40.22.3.28-1
+- network: update NM autoconnections configuration for centos (rvykydal)
+  Resolves: RHEL-67815
+- Run restorecon after copying logs (champetier.etienne)
+  Resolves: RHEL-86788
+- s390x - enable raid1 as a stage2 device (dan)
+  Resolves: RHEL-83924
+  Resolves: INSTALLER-4148
+- edns: restart dnsconfd only after the first kickstart parsing (rvykydal)
+  Resolves: RHEL-83931
+- edns: allow dnsconfd name resolution for kickstart fetching (rvykydal)
+  Resolves: RHEL-83931
+- network: disable autoconnections on RHEL also for BOOTIF option (rvykydal)
+  Resolves: RHEL-69400
+- security: fix dnsconfd backend option check in initramfs (rvykydal)
+  Resolves: RHEL-83576
+
+* Wed Apr 09 2025 Martin Kolman <mkolman@redhat.com> - 40.22.3.27-1
+- Update the tests/README.rst file (jkonecny)
+  Related: RHEL-48821
+- Move shell testing to a separated directory (jkonecny)
+  Related: RHEL-48821
+- Enable dynamic bash commands disable for tests (jkonecny)
+  Related: RHEL-48821
+- Add test for config_get dracut function (jkonecny)
+  Related: RHEL-48821
+- Fix trailing `/` when downloading stage2 image (jkonecny)
+  Resolves: RHEL-48821
+- Fix whitespace chars broke Dracut config parsing (jkonecny)
+  Related: RHEL-48821
+
 * Mon Mar 10 2025 Radek Vykydal <rvykydal@redhat.com> - 40.22.3.26-1
 - network: start dnsconfd in initramfs (rvykydal)
   Resolves: RHEL-80302
