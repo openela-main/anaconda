@@ -1,6 +1,6 @@
 Summary:              Graphical system installer
 Name:                 anaconda
-Version:              34.25.7.6
+Version:              34.25.7.14
 Release:              1%{?dist}.openela.0.3
 License:              GPLv2+ and MIT
 URL:                  http://fedoraproject.org/wiki/Anaconda
@@ -133,6 +133,10 @@ Requires:             python3-pid
 # Required by the systemd service anaconda-fips.
 Requires:             crypto-policies
 Requires:             crypto-policies-scripts
+
+%ifnarch s390 s390x
+Requires:             grub2-common
+%endif
 
 # required because of the rescue mode and VNC question
 Requires:             anaconda-tui = %{version}-%{release}
@@ -425,8 +429,62 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{buildroot}%{_d
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
-* Tue Nov 11 2025 Release Engineering <releng@openela.org> - 34.25.7.6.openela.0.3
+* Tue May 19 2026 Release Engineering <releng@openela.org> - 34.25.7.14.openela.0.3
 - Add OpenELA specific changes
+
+* Tue Feb 17 2026 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.14-1
+- Fix user input in driver disk menu is not displayed (adamkankovsky)
+  Resolves: RHEL-4737
+
+* Mon Feb 09 2026 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.13-1
+- Only show compatible translations in text mode (mkolman)
+  Resolves: RHEL-144834
+
+* Wed Jan 14 2026 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.12-1
+- Fix permissions of the ssh config created by Anaconda (ppolawsk)
+  Resolves: RHEL-129787
+- pyanaconda: rpm_ostree: fix _handle_boot_if_not_mount_point method issues
+  (k.koukiou)
+  Related: RHEL-74145
+- ostree needs to have /boot be bindmounted into sysroot. (a.badger)
+  Resolves: RHEL-74145
+
+* Mon Dec 01 2025 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.11-1
+- bootloader: efi: utilize grub2-common script for handling config file
+  generation (k.koukiou)
+  Resolves: RHEL-36187
+
+* Fri Nov 07 2025 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.10-1
+- Fixing authselect logical differences not resolved during backporting
+  (adamkankovsky)
+  Resolves: RHEL-85175
+
+* Wed Nov 05 2025 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.9-1
+- Set Authselect agruments after run in Security module (adamkankovsky)
+  Resolves: RHEL-85175
+- Authselect code simplification (adamkankovsky)
+  Resolves: RHEL-85175
+- custom: Reallocate partitions when removing a partition (vtrefny)
+  Resolves: RHEL-114169
+
+* Wed Oct 01 2025 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.8-1
+- Fix: UnboundLocalError: local variable 'e' referenced before assignment
+  (k.koukiou)
+  Related to: RHEL-4705
+- Emit authselect in KS when fingerprint is enabled (adamkankovsky)
+  Resolves: RHEL-85175
+
+* Tue Sep 23 2025 Katerina Koukiou <k.koukiou@gmail.com> - 34.25.7.7-1
+- pyanaconda: payload: return exception details for payload failures
+  (k.koukiou)
+- ui: tui: installation_source: show error message in the TUI screen
+  (k.koukiou)
+  Resolves: RHEL-4705
+- storage: fix mount point assignment of non-formatted swap partitions
+  (rvykydal)
+  Related: RHEL-16355
+- storage: include only fstab devices in fsset swap devices property (rvykydal)
+  Resolves: RHEL-16355
 
 * Wed Aug 20 2025 Martin Kolman <mkolman@redhat.com> - 34.25.7.6-1
 - Fix vconsole layout doesn't work for ostree (jkonecny)
