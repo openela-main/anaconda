@@ -1,6 +1,6 @@
 Summary: Graphical system installer
 Name:    anaconda
-Version: 40.22.3.33
+Version: 40.22.3.46
 Release: 1%{?dist}
 License: GPL-2.0-or-later
 URL:     http://fedoraproject.org/wiki/Anaconda
@@ -37,9 +37,9 @@ Source0: https://github.com/rhinstaller/%{name}/releases/download/%{name}-%{vers
 %define libreportanacondaver 2.0.21-1
 %define mehver 0.23-1
 %define nmver 1.0
-%define pykickstartver 3.52.7-1
+%define pykickstartver 3.52.11-1
 %define pypartedver 2.5-2
-%define pythonblivetver 1:3.9.0-1
+%define pythonblivetver 1:3.13.0-1
 %define rpmver 4.15.0
 %define simplelinever 1.9.0-1
 %define subscriptionmanagerver 1.29.31
@@ -136,6 +136,10 @@ Requires: python3-pid
 # Required by the systemd service anaconda-fips.
 Requires: crypto-policies
 Requires: crypto-policies-scripts
+
+%ifnarch s390 s390x
+Requires: grub2-common
+%endif
 
 # required because of the rescue mode and RDP question
 Requires: anaconda-tui = %{version}-%{release}
@@ -246,7 +250,7 @@ Requires: fcoe-utils >= %{fcoeutilsver}
 Requires: device-mapper-multipath
 # only WeakRequires in -env-
 Requires: kdump-anaconda-addon
-%if ! 0%{?rhel}
+%if ! 0%{?rhel} || 0%{?rhel} >= 10
 Requires: zram-generator-defaults
 %else
 Requires: zram-generator
@@ -275,9 +279,17 @@ Requires: ostree
 Requires: skopeo
 # External tooling for managing NVMe-FC devices in the installation environment
 Requires: nvme-cli
+# Needed for bootc
+Requires: bootc
+Requires: bootupd
 # needed for encrypted DNS
 Requires: dnsconfd
 Requires: dnsconfd-dracut
+Requires: selinux-policy
+Requires: libselinux-utils
+Requires: selinux-policy-targeted
+Requires: policycoreutils
+Requires: policycoreutils-python-utils
 
 %description install-img-deps
 The anaconda-install-img-deps metapackage lists all boot.iso installation
@@ -488,6 +500,176 @@ rm -rf \
 %{_prefix}/libexec/anaconda/dd_*
 
 %changelog
+* Mon Mar 02 2026 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.46-1
+- pyanaconda: storage: platform: Raise /boot to 2 GiB (neal)
+  Resolves: RHEL-151547
+
+* Mon Feb 16 2026 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.45-1
+- Fix user input in driver disk menu is not displayed (adamkankovsky)
+  Resolves: RHEL-58828
+- flatpak: tests: fix unreachable code (fsouza.bruno)
+  Related: RHEL-143566
+- flatpak: Only override remote URLs when subscription module is available
+  (bciconel)
+  Related: RHEL-143566
+- flatpak: Make installation failures non-blocking (bciconel)
+  Resolves: RHEL-143566
+- Reload installer SELinux policy at exit so dracut shutdown works (k.koukiou)
+  Resolves: RHEL-144456
+
+* Tue Feb 10 2026 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.44-1
+- storage: stop creating /etc/mtab symlink during installation (k.koukiou)
+  Related: RHEL-135116
+- rescue: Add warning for immutable systems (k.koukiou)
+  Related: RHEL-135116
+- rescue: detect OSTree deployments in rescue mode and show deployment path
+  (k.koukiou)
+  Resolves: RHEL-135116
+- pyanaconda: storage: fix FindExistingSystems API for ostree based OSes
+  (k.koukiou)
+  Related: RHEL-135116
+- network: List all network interfaces IP for RDP session (ppolawsk)
+  Resolves: RHEL-74268
+
+* Wed Jan 28 2026 Bruno <bciconel@redhat.com> - 40.22.3.43-1
+- installation: run subscription tasks after network configuration (bciconel)
+  Resolves: RHEL-135111
+- subscription: ensure /var/lib/insights exists before running insights-client
+  (bciconel)
+  Resolves: RHEL-135111
+- spec: Require zram-generator-defaults for RHEL-10 (k.koukiou)
+  Resolves: RHEL-117685
+- Only show compatible translations in text mode (mkolman)
+  Resolves: RHEL-16168
+
+* Wed Jan 21 2026 Bruno <bciconel@redhat.com> - 40.22.3.42-1
+- payloads: flatpak: fix SSL error detection on older Python versions
+  (bciconel)
+  Related: RHEL-141069
+  Resolves: RHEL-142694
+
+* Wed Jan 21 2026 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.41-1
+- ostree needs to have /boot be bindmounted into sysroot (k.koukiou)
+  Resolves: RHEL-66155
+- modules: rpm_ostree: allow /boot/efi mount point in bootc installation
+  (k.koukiou)
+  Resolves: RHEL-141155
+
+* Tue Jan 13 2026 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.40-1
+- rhsm: add --flatpak-registry-url support (bciconel)
+  Resolves: RHEL-132652
+- flatpak: handle self-signed certificate errors in registry sources (bciconel)
+  Resolves: RHEL-132652
+- flatpak: add utility to check for self-signed certificate errors (bciconel)
+  Resolves: RHEL-132652
+- Fix permissions of the ssh config created by Anaconda (ppolawsk)
+  Resolves: RHEL-99673
+- Add x-initrd.attach to /etc/crypttab device for / volumes (mkolman)
+  Resolves: RHEL-112702
+  Related: RHEL-132666
+
+* Fri Dec 05 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.39-1
+- Remove --root-mount-spec to enable bootc's btrfs subvolume auto-detection
+  (k.koukiou)
+  Related: RHEL-58215
+- bootc: Collect kernel arguments before installation to pass to bootc
+  (k.koukiou)
+  Related: RHEL-58215
+- bootc: Bind mount /boot into sysroot for %%post scripts (k.koukiou)
+  Related: RHEL-58215
+- pyanaconda: bootc: specify the bootloader to grub for bootc (k.koukiou)
+  Related: RHEL-58215
+- Add bootc installation method (ppolawsk)
+  Resolves: RHEL-58215
+- Include bootc command in expected pykickstart commands (ppolawsk)
+  Related: RHEL-58215
+
+* Mon Dec 01 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.38-1
+- bootloader: efi: utilize grub2-common script for handling config file
+  generation (k.koukiou)
+  Resolves: RHEL-58830
+
+* Thu Nov 20 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.37-1
+- Don't pass --sm-disable to gnome-kiosk (awilliam)
+  Resolves: RHEL-129573
+
+* Wed Nov 05 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.36-1
+- Set Authselect agruments after run in Security module (adamkankovsky)
+  Resolves: RHEL-118305
+- Authselect code simplification (adamkankovsky)
+  Resolves: RHEL-118305
+- Emit authselect in KS when fingerprint is enabled (adamkankovsky)
+  Resolves: RHEL-118305
+- custom: Reallocate partitions when removing a partition (vtrefny)
+  Resolves: RHEL-115411
+- Add pyproject.toml for project configuration (bciconel)
+- Support Flatpak installations from Satellite OCI registries (bciconel)
+  Resolves: RHEL-95061
+  Resolves: RHEL-95062
+- Configure default Flatpak remote for RHEL 10 (bciconel)
+- flatpak: enable installation with CDROM source type (bciconel)
+  Resolves: RHEL-116800
+
+* Mon Nov 03 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.35-1
+- Add release notes for RDP kickstart support (adamkankovsky)
+  Resolves: RHEL-96216
+- test: Enable kickstart RDP command in Anaconda (adamkankovsky)
+  Resolves: RHEL-96216
+- Enable kickstart RDP command in Anaconda (adamkankovsky)
+  Resolves: RHEL-96216
+- Adjust to pykickstart adding support for RDP (k.koukiou)
+  Resolves: RHEL-96216
+- Adjust to pykickstart removing support for VNC (k.koukiou)
+  Resolves: RHEL-119216
+- Remove temporary isFinal getter and DBUS API (adamkankovsky)
+  Resolves: RHEL-119216
+- Add test for product DBUS API (adamkankovsky)
+  Resolves: RHEL-119216
+- New getter for product in Runtime module (adamkankovsky)
+  Resolves: RHEL-119216
+- Partial pick of 7a1ae76 (ruff/isort) limited to runtime (adamkankovsky)
+  Resolves: RHEL-119216
+- Test for kickstart scripts (akankovs)
+  Resolves: RHEL-119216
+- Migrate the %%pre-install, %%post, %%onerror and %%traceback scripts
+  (akankovs)
+  Resolves: RHEL-119216
+- Check if text mode was actually requested by kickstart (#2293672) (mkolman)
+  Resolves: RHEL-119216
+- Get kickstart data via DBus (akankovs)
+  Resolves: RHEL-119216
+- Adding a implementation for runtime and ui commands (akankovs)
+  Resolves: RHEL-119216
+- Update tests for kickstart commands (akankovs)
+  Resolves: RHEL-119216
+- Migration of the remaining kickstart commands to the Runtime module
+  (akankovs)
+  Resolves: RHEL-119216
+- Fix mock LUKS devices logic in tests (vtrefny)
+- Fix checking for locked LUKS devices (vtrefny)
+- Bump required version of blivet to 3.13 (vtrefny)
+  Resolves: RHEL-115016
+- Catch blivet.errors.ISCSIError in ISCSIDiscoverTask (vtrefny)
+  Resolves: RHEL-115016
+- Disable LVM auto-activation during installation (vtrefny)
+  Resolves: RHEL-115016
+
+* Tue Sep 23 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.34-1
+- ui: tui: installation_source: show error message in the TUI screen
+  (k.koukiou)
+- pyanaconda: dnf: clarify is_ready boolean return (k.koukiou)
+- tui: make SoftwareSpoke ready once installation source succeeds or fails
+  (k.koukiou)
+  Resolves: RHEL-60724
+- gui: Fix GTK warnings when removing non-existent accelerators (k.koukiou)
+  Resolves: RHEL-45999
+- storage: fix mount point assignment of non-formatted swap partitions
+  (rvykydal)
+  Related: RHEL-61460
+- storage: include only fstab devices in fsset swap devices property (rvykydal)
+  Resolves: RHEL-61460
+- Disable checking for the rdp verb in Anaconda (a.badger)
+
 * Fri Sep 12 2025 Katerina Koukiou <k.koukiou@gmail.com> - 40.22.3.33-1
 - Fix setting of kernel console logging level for anaconda (rvykydal)
   Resolves: RHEL-110525
